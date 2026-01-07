@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DaiquiriBot - Envío de Mensajes</title>
+    <style>
+        :root {
+            --primary-color: #8A2BE2;
+            --secondary-color: #FF6B8B;
+            --accent-color: #00D4AA;
+            --accent-hover: #00B894;
+            --text-color: #333;
+            --white: #ffffff;
+            --error-color: #ff4444;
+            --success-color: #00C851;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 50px auto;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 35px;
+            border-radius: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .bot-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+
+        .bot-tag {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            text-decoration: none;
+        }
+
+        .bot-tag:hover {
+            opacity: 0.9;
+        }
+
+        .descripcion {
+            font-size: 16px;
+            margin-bottom: 30px;
+            text-align: justify;
+            color: var(--text-color);
+            padding: 20px;
+            background: rgba(138, 43, 226, 0.1);
+            border-radius: 15px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            font-size: 16px;
+            margin-bottom: 10px;
+            display: block;
+            font-weight: 500;
+            color: var(--primary-color);
+        }
+
+        select, textarea, input {
+            width: 100%;
+            padding: 15px;
+            border-radius: 12px;
+            border: 2px solid #e0e0e0;
+            font-size: 16px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            background: var(--white);
+            margin-bottom: 10px;
+        }
+
+        select:focus, textarea:focus, input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.2);
+        }
+
+        textarea {
+            height: 150px;
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .btn-container {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn-primary {
+            flex: 1;
+            padding: 18px;
+            background: linear-gradient(135deg, var(--accent-color), var(--accent-hover));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(0, 212, 170, 0.3);
+        }
+
+        .btn-secondary {
+            flex: 0.5;
+            padding: 18px;
+            background: linear-gradient(135deg, #6c757d, #495057);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 212, 170, 0.4);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .footer {
+            margin-top: 35px;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .creator {
+            display: inline-block;
+            background: linear-gradient(135deg, #FF9A9E, #FAD0C4);
+            color: #333;
+            padding: 8px 20px;
+            border-radius: 20px;
+            margin-top: 10px;
+            font-weight: 500;
+        }
+
+        .loading {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--secondary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: none;
+            font-weight: 500;
+        }
+
+        .alert.success {
+            background-color: rgba(0, 200, 81, 0.1);
+            color: var(--success-color);
+            border-left: 4px solid var(--success-color);
+        }
+
+        .alert.error {
+            background-color: rgba(255, 68, 68, 0.1);
+            color: var(--error-color);
+            border-left: 4px solid var(--error-color);
+        }
+
+        .alert.info {
+            background-color: rgba(0, 123, 255, 0.1);
+            color: #0066cc;
+            border-left: 4px solid #0066cc;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+        }
+
+        .contact-avatar {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .character-count {
+            text-align: right;
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .note {
+            background: rgba(255, 193, 7, 0.1);
+            padding: 12px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-size: 14px;
+            color: #856404;
+            border-left: 4px solid #ffc107;
+        }
+
+        .info-box {
+            background: rgba(13, 202, 240, 0.1);
+            padding: 12px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-size: 14px;
+            color: #0c5460;
+            border-left: 4px solid #0dcaf0;
+        }
+
+        .contact-manager {
+            background: rgba(138, 43, 226, 0.05);
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            border: 2px dashed rgba(138, 43, 226, 0.3);
+        }
+
+        .contacts-list {
+            margin-top: 15px;
+        }
+
+        .contact-entry {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: white;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .contact-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-small {
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .btn-edit {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 20px auto;
+                padding: 25px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .bot-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 30px;
+            }
+            
+            .btn-primary, .btn-secondary {
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 20px;
+                margin: 10px auto;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .descripcion {
+                padding: 15px;
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="bot-icon">🤖</div>
+            <h1>DaiquiriBot</h1>
+            <div class="subtitle">Envío de Mensajes por API</div>
+            <a href="https://t.me/DaiquirisBot" target="_blank" class="bot-tag">@DaiquirisBot</a>
+        </div>
+        
+        <p class="descripcion">
+            Esta interfaz utiliza la API de Telegram para enviar mensajes directamente a tus contactos. 
+            Escribe tu mensaje, selecciona o ingresa el ID del destinatario y haz clic en enviar. Tu mensaje será entregado 
+            instantáneamente a través del bot <strong>@DaiquirisBot</strong> creado por Valeria y Leonela.
+        </p>
+
+        <div class="alert" id="alert"></div>
+
+        <div class="form-group">
+            <label for="destino">👤 Destinatario (ID de Telegram):</label>
+            <input type="text" id="chatId" placeholder="Ejemplo: 1234567890" pattern="\d+" 
+                   title="Solo números, sin espacios ni símbolos">
+            <div class="info-box">
+                <strong>📝 ¿Cómo obtener el ID?</strong><br>
+                1. Busca a <a href="https://t.me/userinfobot" target="_blank">@userinfobot</a> en Telegram<br>
+                2. Envíale el comando <code>/start</code><br>
+                3. Te responderá con tu ID de usuario
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="mensaje">💬 Escribe tu mensaje:</label>
+            <textarea id="mensaje" placeholder="Escribe aquí el mensaje que deseas enviar..." maxlength="4000"></textarea>
+            <div class="character-count">
+                <span id="charCount">0</span>/4000 caracteres
+            </div>
+        </div>
+
+        <div class="btn-container">
+            <button id="sendBtn" class="btn-primary" onclick="enviarMensaje()">
+                <span>🚀 Enviar Mensaje</span>
+                <div class="loading" id="loading"></div>
+            </button>
+            <button id="testBtn" class="btn-secondary" onclick="testConnection()">
+                <span>🔗 Probar Conexión</span>
+            </button>
+        </div>
+
+        <div class="contact-manager">
+            <h3 style="color: var(--primary-color); margin-bottom: 15px;">📋 Administrar Contactos</h3>
+            <div class="form-group">
+                <label for="contactName">Nombre del contacto:</label>
+                <input type="text" id="contactName" placeholder="Ejemplo: Juan Pérez">
+                <label for="contactId">ID del contacto:</label>
+                <input type="text" id="contactId" placeholder="Ejemplo: 1234567890">
+                <button onclick="addContact()" class="btn-primary" style="margin-top: 10px;">➕ Agregar Contacto</button>
+            </div>
+            
+            <div class="contacts-list" id="contactsList">
+                <!-- Los contactos se mostrarán aquí -->
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Bot creado y mantenido por Valeria</p>
+            <div class="creator">✨ Creado con ❤️ por Valeria y Leonela</div>
+            <p style="font-size: 12px; margin-top: 10px; opacity: 0.7;">
+                Los mensajes se envían mediante la API oficial de Telegram
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Configuración - TU TOKEN AQUÍ
+        const TOKEN = "8465024037:AAEb2042RGjEKO-AA3p6-EZ8kmVh5FQQnpk";
+        const BOT_NAME = "@DaiquirisBot";
+        const MAX_MESSAGE_LENGTH = 4000;
+
+        // Elementos del DOM
+        const mensajeInput = document.getElementById('mensaje');
+        const chatIdInput = document.getElementById('chatId');
+        const sendBtn = document.getElementById('sendBtn');
+        const testBtn = document.getElementById('testBtn');
+        const loadingSpinner = document.getElementById('loading');
+        const alertDiv = document.getElementById('alert');
+        const charCount = document.getElementById('charCount');
+        const contactNameInput = document.getElementById('contactName');
+        const contactIdInput = document.getElementById('contactId');
+        const contactsList = document.getElementById('contactsList');
+
+        // Contactos guardados (se cargan del localStorage)
+        let contacts = JSON.parse(localStorage.getItem('daiquiribot_contacts')) || [];
+
+        // Inicializar lista de contactos
+        function loadContacts() {
+            contactsList.innerHTML = '';
+            contacts.forEach((contact, index) => {
+                const contactDiv = document.createElement('div');
+                contactDiv.className = 'contact-entry';
+                contactDiv.innerHTML = `
+                    <div>
+                        <strong>${contact.name}</strong><br>
+                        <small>ID: ${contact.id}</small>
+                    </div>
+                    <div class="contact-actions">
+                        <button class="btn-small btn-edit" onclick="useContact(${index})">Usar</button>
+                        <button class="btn-small btn-edit" onclick="editContact(${index})">Editar</button>
+                        <button class="btn-small btn-delete" onclick="deleteContact(${index})">Eliminar</button>
+                    </div>
+                `;
+                contactsList.appendChild(contactDiv);
+            });
+        }
+
+        // Agregar contacto
+        function addContact() {
+            const name = contactNameInput.value.trim();
+            const id = contactIdInput.value.trim();
+            
+            if (!name || !id) {
+                showAlert("Por favor, completa ambos campos", "error");
+                return;
+            }
+            
+            if (!/^\d+$/.test(id)) {
+                showAlert("El ID debe contener solo números", "error");
+                return;
+            }
+            
+            contacts.push({ name, id });
+            localStorage.setItem('daiquiribot_contacts', JSON.stringify(contacts));
+            
+            contactNameInput.value = '';
+            contactIdInput.value = '';
+            
+            loadContacts();
+            showAlert("Contacto agregado correctamente", "success");
+        }
+
+        // Usar contacto
+        function useContact(index) {
+            const contact = contacts[index];
+            chatIdInput.value = contact.id;
+            showAlert(`Contacto "${contact.name}" seleccionado`, "info");
+        }
+
+        // Editar contacto
+        function editContact(index) {
+            const contact = contacts[index];
+            const newName = prompt("Nuevo nombre:", contact.name);
+            if (newName !== null) {
+                const newId = prompt("Nuevo ID:", contact.id);
+                if (newId !== null && /^\d+$/.test(newId)) {
+                    contacts[index] = { name: newName, id: newId };
+                    localStorage.setItem('daiquiribot_contacts', JSON.stringify(contacts));
+                    loadContacts();
+                    showAlert("Contacto actualizado", "success");
+                }
+            }
+        }
+
+        // Eliminar contacto
+        function deleteContact(index) {
+            if (confirm("¿Estás seguro de eliminar este contacto?")) {
+                contacts.splice(index, 1);
+                localStorage.setItem('daiquiribot_contacts', JSON.stringify(contacts));
+                loadContacts();
+                showAlert("Contacto eliminado", "success");
+            }
+        }
+
+        // Contador de caracteres
+        mensajeInput.addEventListener('input', function() {
+            const length = this.value.length;
+            charCount.textContent = length;
+            
+            if (length > MAX_MESSAGE_LENGTH * 0.9) {
+                charCount.style.color = '#ff4444';
+            } else if (length > MAX_MESSAGE_LENGTH * 0.75) {
+                charCount.style.color = '#ff9900';
+            } else {
+                charCount.style.color = '#666';
+            }
+        });
+
+        // Función para mostrar alertas
+        function showAlert(message, type) {
+            alertDiv.textContent = message;
+            alertDiv.className = `alert ${type}`;
+            alertDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                alertDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        // Probar conexión con el bot
+        async function testConnection() {
+            if (!validateToken(TOKEN)) {
+                showAlert("❌ Error: Token del bot inválido", "error");
+                return;
+            }
+
+            testBtn.disabled = true;
+            testBtn.innerHTML = '<span>Probando...</span>';
+
+            try {
+                const url = `https://api.telegram.org/bot${TOKEN}/getMe`;
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (data.ok) {
+                    showAlert(`✅ Conexión exitosa con ${data.result.username}`, "success");
+                    console.log("Información del bot:", data.result);
+                } else {
+                    showAlert("❌ No se pudo conectar con el bot", "error");
+                }
+            } catch (error) {
+                showAlert("❌ Error de conexión", "error");
+            } finally {
+                testBtn.disabled = false;
+                testBtn.innerHTML = '<span>🔗 Probar Conexión</span>';
+            }
+        }
+
+        // Validar token
+        function validateToken(token) {
+            if (!token || token.trim() === '') {
+                return false;
+            }
+            // Formato: números:letras
+            const tokenRegex = /^\d{10}:[A-Za-z0-9_-]{35}$/;
+            return tokenRegex.test(token);
+        }
+
+        // Función principal para enviar mensaje
+        async function enviarMensaje() {
+            // Validar token
+            if (!validateToken(TOKEN)) {
+                showAlert("❌ Error: Token del bot inválido", "error");
+                return;
+            }
+
+            const mensaje = mensajeInput.value.trim();
+            const chatID = chatIdInput.value.trim();
+
+            // Validaciones
+            if (!mensaje) {
+                showAlert("Por favor, escribe un mensaje", "error");
+                mensajeInput.focus();
+                return;
+            }
+
+            if (!chatID) {
+                showAlert("Por favor, ingresa un ID de chat", "error");
+                chatIdInput.focus();
+                return;
+            }
+
+            if (!/^\d+$/.test(chatID)) {
+                showAlert("El ID debe contener solo números", "error");
+                return;
+            }
+
+            if (mensaje.length > MAX_MESSAGE_LENGTH) {
+                showAlert(`Mensaje demasiado largo (máximo ${MAX_MESSAGE_LENGTH} caracteres)`, "error");
+                return;
+            }
+
+            // Deshabilitar botón y mostrar loading
+            sendBtn.disabled = true;
+            loadingSpinner.style.display = 'block';
+            sendBtn.innerHTML = '<span>Enviando...</span><div class="loading" style="display: block;"></div>';
+
+            try {
+                const url = `https://api.telegram.org/bot${TOKEN}/sendMessage`;
+                const datos = {
+                    chat_id: chatID,
+                    text: mensaje,
+                    parse_mode: 'HTML'
+                };
+
+                const response = await fetch(url, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(datos)
+                });
+
+                const data = await response.json();
+
+                if (data.ok) {
+                    showAlert(`✅ Mensaje enviado a través de ${BOT_NAME}`, "success");
+                    mensajeInput.value = "";
+                    charCount.textContent = "0";
+                    charCount.style.color = "#666";
+                    
+                    console.log("Mensaje enviado:", {
+                        bot: BOT_NAME,
+                        destino: chatID,
+                        timestamp: new Date().toLocaleString()
+                    });
+                } else {
+                    let errorMsg = "Error al enviar el mensaje";
+                    if (data.description) {
+                        if (data.description.includes("chat not found")) {
+                            errorMsg = "Chat no encontrado. Asegúrate que el usuario haya iniciado conversación con el bot.";
+                        } else if (data.description.includes("Forbidden")) {
+                            errorMsg = "El bot ha sido bloqueado o no tiene permisos.";
+                        } else if (data.description.includes("Bad Request")) {
+                            errorMsg = "ID de chat inválido. Verifica el formato.";
+                        } else {
+                            errorMsg += `: ${data.description}`;
+                        }
+                    }
+                    showAlert(`❌ ${errorMsg}`, "error");
+                    console.error("Error de Telegram:", data);
+                }
+
+            } catch (error) {
+                console.error("Error:", error);
+                showAlert("❌ Error de conexión. Verifica tu internet.", "error");
+            } finally {
+                sendBtn.disabled = false;
+                loadingSpinner.style.display = 'none';
+                sendBtn.innerHTML = '<span>🚀 Enviar Mensaje</span><div class="loading"></div>';
+            }
+        }
+
+        // Atajos de teclado
+        mensajeInput.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                enviarMensaje();
+            }
+        });
+
+        // Información en consola
+        console.log(`%c🤖 ${BOT_NAME}`, 'color: #8A2BE2; font-size: 16px; font-weight: bold;');
+        console.log(`%cToken válido: ${validateToken(TOKEN)}`, 'color: #00C851;');
+        console.log(`%cContactos guardados: ${contacts.length}`, 'color: #FF6B8B;');
+
+        // Inicializar
+        charCount.textContent = mensajeInput.value.length;
+        loadContacts();
+        
+        // Probar automáticamente la conexión al cargar
+        window.addEventListener('load', () => {
+            if (validateToken(TOKEN)) {
+                showAlert(`✅ ${BOT_NAME} listo para enviar mensajes`, "info");
+            } else {
+                showAlert("⚠️ Verifica el token del bot", "error");
+            }
+        });
+    </script>
+</body>
+</html>
